@@ -7,6 +7,7 @@
         ['$stateProvider', '$urlRouterProvider',
             function ($stateProvider, $urlRouterProvider) {
 
+                $urlRouterProvider.when('/tlc.open.java', 'http://thelastcheck.github.io/tlc.open.java');
                 $urlRouterProvider.otherwise('/');
 
                 $stateProvider
