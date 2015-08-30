@@ -23,7 +23,7 @@
                     })
                     .state('openSource', {
                         url: '/tlc.open.java',
-                        templateUrl: "/tlc.open.java/index.html",
+                        templateUrl: "/tlc.open.java",
                     });
 
             }]);
