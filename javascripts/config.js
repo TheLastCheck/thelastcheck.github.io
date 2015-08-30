@@ -21,7 +21,7 @@
                         //controllerAs: "search"
                     })
                     .state('openSource', {
-                        url: '/openSource',
+                        url: '../tlc.open.java',
                         templateUrl: "/tlc.open.java/index.html",
                     });
 
