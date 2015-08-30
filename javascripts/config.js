@@ -7,7 +7,7 @@
         ['$stateProvider', '$urlRouterProvider',
             function ($stateProvider, $urlRouterProvider) {
 
-                $urlRouterProvider.when('/tlc.open.java', 'http://thelastcheck.github.io/tlc.open.java');
+                $urlRouterProvider.when('/tlc.open.java', '/tlc.open.java');
                 $urlRouterProvider.otherwise('/');
 
                 $stateProvider
@@ -23,7 +23,8 @@
                     })
                     .state('openSource', {
                         url: '/tlc.open.java',
-                        templateUrl: "/tlc.open.java",
+                        templateUrl: "/tlc.open.java"
+                        //templateUrl: "templates/openSource.html"
                     });
 
             }]);
