@@ -21,9 +21,14 @@
                         //controller: "searchController",
                         //controllerAs: "search"
                     })
-                    .state('openSource', {
-                        url: '/tlc.open.java',
-                        templateUrl: "/tlc.open.java"
+                    .state('tlc-open-java', {
+                        url: '/tlc-open-java',
+                        templateUrl: "tlc-open-java/tlc-open-java.html"
+                        //templateUrl: "templates/openSource.html"
+                    })
+                    .state('tlc-commons-buffer', {
+                        url: '/tlc-commons-buffer',
+                        templateUrl: "tlc-open-java/tlc-commons-buffer.html"
                         //templateUrl: "templates/openSource.html"
                     });
 
