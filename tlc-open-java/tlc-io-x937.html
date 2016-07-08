@@ -1,0 +1,244 @@
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+    <header class="inner">
+        <a id="forkme_banner" href="https://github.com/TheLastCheck/tlc.open.java">View on GitHub</a>
+
+        <h1 id="project_title">tlc-io-x937</h1>
+
+        <h2 id="project_tagline">A set of classes for reading, writing, and parsing X9.37 format files.</h2>
+
+    </header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+
+        <h2>Overview</h2>
+
+        <p>A set of classes for reading, writing, and parsing X9.37 format files.</p>
+
+        <p>While the documentation is still being developed, you can see some useful information below.</p>
+
+        <h2>Importing Library</h2>
+
+        <p>For maven users:</p>
+
+        <pre>
+<!-- http://mvnrepository.com/artifact/com.thelastcheck.commons/tlc-io-x937 -->
+&lt;dependency&gt;
+    &lt;groupId&gt;com.thelastcheck.commons&lt;/groupId&gt;
+    &lt;artifactId&gt;tlc-io-x937&lt;/artifactId&gt;
+    &lt;version&gt;2.3.0&lt;/version&gt;
+&lt;/dependency&gt;
+        </pre>
+
+        <p>For gradle adopters:</p>
+
+        <pre>
+// http://mvnrepository.com/artifact/com.thelastcheck.commons/tlc-io-x937
+compile group: 'com.thelastcheck.commons', name: 'tlc-io-x937', version: '2.3.0'
+        </pre>
+
+        <p>Also you can clone our source code in our
+            <a href="https://github.com/TheLastCheck/tlc.open.java">github repository on this link</a>.
+        </p>
+
+        <h2>Creating a X9.37 file from Scratch</h2>
+
+        <p>
+            You can create X9 files easily from scratch copying the below code.
+            All the required records to a minimal and simple X9 are created. The code
+            is pretty simple and well commented, so you can have an idea to proceed to yours
+            complex files.<br/>
+            <em>PS: We are supposing that you already have all the checks data, and also the front &amp;
+            rear tiff images for the sake of simplicity.</em>
+        </p>
+
+        <pre>
+// Build factory and set the encoding
+X9RecordFactoryStrategy strategy = new DefaultX9RecordFactoryStrategy();
+X9RecordFactory factory = strategy.factory(X9RecordFactoryStrategy.X937_STANDARD_DSTU,
+X9Record.ENCODING_EBCDIC); // X9Record.ENCODING_US_ASCII
+
+// Header File
+X937FileHeaderRecord headerRecord =
+(X937FileHeaderRecord) factory.newX9Record(X9Record.TYPE_FILE_HEADER);
+headerRecord.standardLevel("03");
+headerRecord.testFileIndicator("P");
+headerRecord.immediateDestinationRoutingNumber("999999999");
+headerRecord.immediateOriginRoutingNumber("111111111");
+headerRecord.fileCreationDate(DateTime.now().toDate());
+headerRecord.fileCreationTime(DateTime.now().toDate());
+headerRecord.resendIndicator("N");
+headerRecord.immediateDestinationName("Bank of America");
+headerRecord.immediateOriginName("Bank of Leo");
+headerRecord.fileIDModifier("0");
+
+// Cash Letter Header
+X937CashLetterHeaderRecord cashLetterHeaderRecord =
+(X937CashLetterHeaderRecord) factory.newX9Record(X9Record.TYPE_CASH_LETTER_HEADER);
+cashLetterHeaderRecord.collectionTypeIndicator("01");
+cashLetterHeaderRecord.destinationRoutingNumber("999999999");
+cashLetterHeaderRecord.ECEInstitutionRoutingNumber("111111111");
+cashLetterHeaderRecord.cashLetterBusinessDate(DateTime.now().toDate());
+cashLetterHeaderRecord.cashLetterCreationDate(DateTime.now().toDate());
+cashLetterHeaderRecord.cashLetterCreationTime(DateTime.now().toDate());
+cashLetterHeaderRecord.cashLetterRecordTypeIndicator("I");
+cashLetterHeaderRecord.cashLetterDocumentationTypeIndicator("G");
+cashLetterHeaderRecord.cashLetterID("00109301");
+cashLetterHeaderRecord.originatorContactName("Leo");
+cashLetterHeaderRecord.originatorContactName("17862129999");
+
+// Bundle Header
+X937BundleHeaderRecord bundleHeaderRecord =
+(X937BundleHeaderRecord) factory.newX9Record(X9Record.TYPE_BUNDLE_HEADER);
+bundleHeaderRecord.collectionTypeIndicator("01");
+bundleHeaderRecord.destinationRoutingNumber("999999999");
+bundleHeaderRecord.ECEInstitutionRoutingNumber("999999999");
+bundleHeaderRecord.bundleBusinessDate(DateTime.now().toDate());
+bundleHeaderRecord.bundleCreationDate(DateTime.now().toDate());
+bundleHeaderRecord.bundleID("0000000001");
+bundleHeaderRecord.bundleSequenceNumber("0001");
+bundleHeaderRecord.cycleNumber("01");
+bundleHeaderRecord.returnLocationRoutingNumber("999999999");
+
+// Check Detail
+X937CheckDetailRecord checkDetailRecord =
+(X937CheckDetailRecord) factory.newX9Record(X9Record.TYPE_CHECK_DETAIL);
+checkDetailRecord.payorBankRoutingNumber("222222222");
+checkDetailRecord.onUs("0000000001/000000042");
+checkDetailRecord.itemAmount("0000010000");
+checkDetailRecord.ECEInstitutionItemSequenceNumber("000000000100045");
+checkDetailRecord.documentationTypeIndicator("G");
+checkDetailRecord.returnAcceptanceIndicator("0");
+checkDetailRecord.MICRValidIndicator("1");
+checkDetailRecord.BOFDIndicator("Y");
+checkDetailRecord.checkDetailRecordAddendumCount("01");
+
+// Check Addendum A
+X937CheckDetailAddendumARecord checkDetailAddendumARecord =
+(X937CheckDetailAddendumARecord) factory.newX9Record(X9Record.TYPE_CHECK_DETAIL_ADDENDUM_A);
+checkDetailAddendumARecord.checkDetailAddendumARecordNumber("1");
+checkDetailAddendumARecord.BOFDRoutingNumber("999999999");
+checkDetailAddendumARecord.BOFDBusinessDate(DateTime.now().toDate());
+checkDetailAddendumARecord.BOFDItemSequenceNumber("000000000000001");
+checkDetailAddendumARecord.truncationIndicator("Y");
+
+// Image View Detail - Front
+File checkFrontImage = new File("/path/to/check-front.tif");
+X937ImageViewDetailRecord frontImageViewDetailRecord =
+(X937ImageViewDetailRecord) factory.newX9Record(X9Record.TYPE_IMAGE_VIEW_DETAIL);
+frontImageViewDetailRecord.imageIndicator("1");
+frontImageViewDetailRecord.imageCreatorRoutingNumber("999999999");
+frontImageViewDetailRecord.imageCreatorDate(DateTime.now().toDate());
+frontImageViewDetailRecord.imageViewFormatIndicator("00");
+frontImageViewDetailRecord.imageViewCompressionAlgorithmIdentifier("00");
+frontImageViewDetailRecord.imageViewDataSize((int) checkFrontImage.length());
+frontImageViewDetailRecord.viewSideIndicator("0");
+frontImageViewDetailRecord.viewDescriptor("00");
+frontImageViewDetailRecord.digitalSignatureIndicator("0");
+
+// Image View Data - Front
+X937ImageViewDataRecord frontImageViewDataRecord =
+(X937ImageViewDataRecord) factory.newX9Record(X9Record.TYPE_IMAGE_VIEW_DATA);
+frontImageViewDataRecord.ECEInstitutionRoutingNumber("999999999");
+frontImageViewDataRecord.bundleBusinessDate(DateTime.now().toDate());
+frontImageViewDataRecord.cycleNumber("12");
+frontImageViewDataRecord.ECEInstitutionItemSequenceNumber("000000000000001");
+frontImageViewDataRecord.imageData(new ByteArray(Files.readAllBytes(checkFrontImage.toPath())));
+frontImageViewDataRecord.clippingOrigin("0");
+
+// Image View Detail - Rear
+File checkRearImage = new File("/path/to/check-rear.tif");
+X937ImageViewDetailRecord rearImageViewDetailRecord =
+(X937ImageViewDetailRecord) factory.newX9Record(X9Record.TYPE_IMAGE_VIEW_DETAIL);
+rearImageViewDetailRecord.imageIndicator("1");
+rearImageViewDetailRecord.imageCreatorRoutingNumber("999999999");
+rearImageViewDetailRecord.imageCreatorDate(DateTime.now().toDate());
+rearImageViewDetailRecord.imageViewFormatIndicator("00");
+rearImageViewDetailRecord.imageViewCompressionAlgorithmIdentifier("00");
+rearImageViewDetailRecord.imageViewDataSize((int) checkRearImage.length());
+rearImageViewDetailRecord.viewSideIndicator("1");
+rearImageViewDetailRecord.viewDescriptor("00");
+rearImageViewDetailRecord.digitalSignatureIndicator("0");
+
+// Image View Data - Rear
+X937ImageViewDataRecord rearImageViewDataRecord =
+(X937ImageViewDataRecord) factory.newX9Record(X9Record.TYPE_IMAGE_VIEW_DATA);
+rearImageViewDataRecord.ECEInstitutionRoutingNumber("999999999");
+rearImageViewDataRecord.bundleBusinessDate(DateTime.now().toDate());
+rearImageViewDataRecord.cycleNumber("12");
+rearImageViewDataRecord.ECEInstitutionItemSequenceNumber("000000000000001");
+rearImageViewDataRecord.clippingOrigin("0");
+rearImageViewDataRecord.imageData(new ByteArray(Files.readAllBytes(checkRearImage.toPath())));
+
+// Bundle Control
+X937BundleControlRecord bundleControlRecord =
+(X937BundleControlRecord) factory.newX9Record(X9Record.TYPE_BUNDLE_CONTROL);
+
+// Cash Letter Control
+X937CashLetterControlRecord cashLetterControlRecord =
+(X937CashLetterControlRecord) factory.newX9Record(X9Record.TYPE_CASH_LETTER_CONTROL);
+cashLetterControlRecord.ECEInstitutionName("Leo LLC");
+
+// File Control
+X937FileControlRecord fileControlRecord =
+(X937FileControlRecord) factory.newX9Record(X9Record.TYPE_FILE_CONTROL);
+fileControlRecord.immediateOriginContactName("Leo");
+fileControlRecord.immediateOriginContactPhoneNumber("7862129999");
+
+// Set Filter to automatically fills the totals in the control records and
+// finally creates the X9 file
+OutputStream os = new FileOutputStream("my-first-x.937");
+X9OutputStreamRecordWriter out = new X9OutputStreamRecordWriter(os);
+out.addFilter(new ControlTotalsRecordFilter());
+out.write(headerRecord);
+out.write(cashLetterHeaderRecord);
+out.write(bundleHeaderRecord);
+out.write(checkDetailRecord);
+out.write(checkDetailAddendumARecord);
+out.write(frontImageViewDetailRecord);
+out.write(frontImageViewDataRecord);
+out.write(rearImageViewDetailRecord);
+out.write(rearImageViewDataRecord);
+out.write(bundleControlRecord);
+out.write(cashLetterControlRecord);
+out.write(fileControlRecord);
+out.close();
+        </pre>
+
+        <h3>Issues</h3>
+
+        <p>If you have any issues, access our github repository issues page on
+            <a href="https://github.com/TheLastCheck/tlc.open.java/issues">this link</a>.
+        </p>
+
+        <hr>
+
+        <p>Copyright [2009-2015] [The Last Check, LLC]</p>
+
+        <p>Licensed under the Apache License, Version 2.0 (the "License");
+            you may not use this file except in compliance with the License.
+            You may obtain a copy of the License at</p>
+
+<pre><code> http://www.apache.org/licenses/LICENSE-2.0
+</code></pre>
+
+        <p>Unless required by applicable law or agreed to in writing, software
+            distributed under the License is distributed on an "AS IS" BASIS,
+            WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+            See the License for the specific language governing permissions and
+            limitations under the License.</p>
+    </section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p class="copyright">tlc.open.java maintained by <a href="https://github.com/TheLastCheck">TheLastCheck</a></p>
+
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+</div>
+

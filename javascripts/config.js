@@ -30,6 +30,11 @@
                         url: '/tlc-commons-buffer',
                         templateUrl: "tlc-open-java/tlc-commons-buffer.html"
                         //templateUrl: "templates/openSource.html"
+                    })
+                    .state('tlc-io-x937', {
+                        url: '/tlc-io-x937',
+                        templateUrl: "tlc-open-java/tlc-io-x937.html"
+                        //templateUrl: "templates/openSource.html"
                     });
 
             }]);
