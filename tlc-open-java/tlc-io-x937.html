@@ -191,7 +191,8 @@ fileControlRecord.immediateOriginContactPhoneNumber("7862129999");
 // Set Filter to automatically fills the totals in the control records and
 // finally creates the X9 file
 OutputStream os = new FileOutputStream("my-first-x.937");
-X9OutputStreamRecordWriter out = new X9OutputStreamRecordWriter(os);
+BufferedOutputStream bos = new BufferedOutputStream(os, 65536);
+X9OutputStreamRecordWriter out = new X9OutputStreamRecordWriter(bos);
 out.addFilter(new ControlTotalsRecordFilter());
 out.write(headerRecord);
 out.write(cashLetterHeaderRecord);
